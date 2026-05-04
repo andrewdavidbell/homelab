@@ -1,0 +1,45 @@
+networks:
+  proxy:
+
+services:
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config
+    networks:
+      - proxy
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_SCHEDULE: "0 0 4 * * *"
+      WATCHTOWER_CLEANUP: "true"
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    volumes:
+      - ./data/openwebui:/app/backend/data
+    networks:
+      - proxy
+
+  searxng:
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    environment:
+      SEARXNG_SECRET_KEY: "${SEARXNG_SECRET_KEY}"
+    volumes:
+      - ./searxng:/etc/searxng:ro
+    networks:
+      - proxy

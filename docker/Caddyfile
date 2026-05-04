@@ -1,0 +1,9 @@
+openwebui.home.arpa {
+    tls internal
+    reverse_proxy openwebui:8080
+}
+
+search.home.arpa {
+    tls internal
+    reverse_proxy searxng:8080
+}

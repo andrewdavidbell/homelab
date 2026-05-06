@@ -61,8 +61,12 @@ sudo bash scripts/setup-hosts.sh
 docker compose up -d
 
 # 4. Trust Caddy's local CA (required once per machine)
-docker compose exec caddy caddy trust
-# or: import docker/data/caddy/data/caddy/pki/authorities/local/root.crt into Keychain Access
+# caddy trust won't work inside the container — it would only update the container's
+# trust store, not macOS Keychain. Import the cert directly from the bind-mount instead:
+sudo security add-trusted-cert -d -r trustRoot \
+  -k /Library/Keychains/System.keychain \
+  data/caddy/data/caddy/pki/authorities/local/root.crt
+# Caddy persists this CA across restarts, so this only needs to be done once.
 
 # 5. Open
 open https://openwebui.home.arpa

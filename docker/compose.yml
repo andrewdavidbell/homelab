@@ -4,6 +4,7 @@ networks:
 services:
   caddy:
     image: caddy:latest
+    container_name: caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -16,7 +17,8 @@ services:
       - proxy
 
   watchtower:
-    image: containrrr/watchtower:latest
+    image: nickfedor/watchtower:latest
+    container_name: watchtower
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -26,9 +28,16 @@ services:
 
   openwebui:
     image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
     restart: unless-stopped
     environment:
       OLLAMA_BASE_URL: http://host.docker.internal:11434
+      WEBUI_AUTH: "False"
+      # Note: web search settings below are ignored when a pre-existing DB is
+      # present - configure via Admin Panel > Settings > Web Search instead.
+      # ENABLE_RAG_WEB_SEARCH: "True"
+      # RAG_WEB_SEARCH_ENGINE: "searxng"
+      # SEARXNG_QUERY_URL: "http://searxng:8080/search?q=<query>&format=json"
     volumes:
       - ./data/openwebui:/app/backend/data
     networks:
@@ -36,10 +45,23 @@ services:
 
   searxng:
     image: searxng/searxng:latest
+    container_name: searxng
     restart: unless-stopped
     environment:
       SEARXNG_SECRET_KEY: "${SEARXNG_SECRET_KEY}"
     volumes:
-      - ./searxng:/etc/searxng:ro
+      - ./data/searxng:/etc/searxng:rw
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
     networks:
       - proxy

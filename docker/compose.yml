@@ -50,7 +50,7 @@ services:
     environment:
       SEARXNG_SECRET_KEY: "${SEARXNG_SECRET_KEY}"
     volumes:
-      - ./data/searxng:/etc/searxng:rw
+      - ./config/searxng:/etc/searxng:ro
     cap_drop:
       - ALL
     cap_add:

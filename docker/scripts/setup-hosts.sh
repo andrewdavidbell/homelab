@@ -7,7 +7,11 @@ HOSTS_FILE="/etc/hosts"
 
 HOSTNAMES=(
   openwebui.home.arpa
+  openwebui
   search.home.arpa
+  search
+  omlx.home.arpa
+  omlx
 )
 
 # Parse flags

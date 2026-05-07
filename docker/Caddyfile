@@ -1,9 +1,14 @@
-openwebui.home.arpa {
+openwebui.home.arpa, openwebui {
     tls internal
     reverse_proxy openwebui:8080
 }
 
-search.home.arpa {
+search.home.arpa, search {
     tls internal
     reverse_proxy searxng:8080
+}
+
+omlx.home.arpa, omlx {
+    tls internal
+    reverse_proxy host.docker.internal:8000
 }

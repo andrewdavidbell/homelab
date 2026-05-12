@@ -14,6 +14,8 @@ HOSTNAMES=(
   omlx
   jupyter.home.arpa
   jupyter
+  kokoro.home.arpa
+  kokoro
 )
 
 # Parse flags

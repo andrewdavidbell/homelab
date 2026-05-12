@@ -81,3 +81,12 @@ services:
       - ./data/jupyter:/home/jovyan/work
     networks:
       - proxy
+
+  kokoro-tts:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    container_name: kokoro-tts
+    restart: unless-stopped
+    volumes:
+      - ./data/kokoro:/app/voices
+    networks:
+      - proxy

@@ -17,3 +17,8 @@ jupyter.home.arpa, jupyter {
     tls internal
     reverse_proxy jupyter:8888
 }
+
+kokoro.home.arpa, kokoro {
+    tls internal
+    reverse_proxy kokoro-tts:8880
+}

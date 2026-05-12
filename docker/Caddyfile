@@ -12,3 +12,8 @@ omlx.home.arpa, omlx {
     tls internal
     reverse_proxy host.docker.internal:8000
 }
+
+jupyter.home.arpa, jupyter {
+    tls internal
+    reverse_proxy jupyter:8888
+}

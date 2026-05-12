@@ -1,3 +1,5 @@
+name: homelab
+
 networks:
   proxy:
 
@@ -32,7 +34,9 @@ services:
     restart: unless-stopped
     environment:
       OLLAMA_BASE_URL: http://host.docker.internal:11434
-      WEBUI_AUTH: "False"
+      # WEBUI_AUTH defaults to True, so you can leave it unset or explicitly set it
+      # WEBUI_AUTH: "True"
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"
       # Note: web search settings below are ignored when a pre-existing DB is
       # present - configure via Admin Panel > Settings > Web Search instead.
       # ENABLE_RAG_WEB_SEARCH: "True"
@@ -63,5 +67,17 @@ services:
       options:
         max-size: "1m"
         max-file: "1"
+    networks:
+      - proxy
+
+  jupyter:
+    image: jupyter/scipy-notebook:latest
+    container_name: jupyter
+    restart: unless-stopped
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      JUPYTER_TOKEN: "${JUPYTER_TOKEN}"
+    volumes:
+      - ./data/jupyter:/home/jovyan/work
     networks:
       - proxy

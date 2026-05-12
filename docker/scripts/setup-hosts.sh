@@ -12,6 +12,8 @@ HOSTNAMES=(
   search
   omlx.home.arpa
   omlx
+  jupyter.home.arpa
+  jupyter
 )
 
 # Parse flags

@@ -6,7 +6,11 @@ Complete first-time setup for the homelab Docker stack.
 
 - **macOS**: Tested on Apple Silicon (M1/M2/M3)
 - **Docker Desktop**: Latest version installed and running
-- **Ollama or oMLX**: For LLM inference with OpenWebUI
+- **LLM Inference Engine** (choose one):
+  - **oMLX** - Recommended for Apple Silicon ([mlx-lm](https://github.com/ml-explore/mlx-examples))
+  - **Ollama** - Popular cross-platform option ([ollama.ai](https://ollama.ai/))
+  - **LMStudio** - User-friendly GUI ([lmstudio.ai](https://lmstudio.ai/))
+  - Any OpenAI-compatible API server
 - **Terminal Access**: For running setup commands
 
 ## Step-by-Step Setup
@@ -157,9 +161,16 @@ First-time OpenWebUI setup:
    - Navigate to `https://openwebui.home.arpa`
    - Create your admin account (first user is admin)
 
-2. **Verify Ollama/oMLX Connection**:
+2. **Configure Inference Engine Connection**:
+   - Go to Admin Panel → Settings → Connections
+   - Add your inference engine (the `OLLAMA_BASE_URL` environment variable is only used for initial setup)
+   - Configure based on your choice:
+     - **oMLX** on host:8000: `http://host.docker.internal:8000`
+     - **Ollama** on host:11434: `http://host.docker.internal:11434`
+     - **LMStudio** on host:1234: `http://host.docker.internal:1234`
+     - **oMLX service** in stack: `http://omlx:8000`
+   - Use "Test Connection" to verify
    - Check that models are available
-   - If not, configure connection in Settings
 
 3. **Optional - Configure Integrations**:
    - [Web Search (SearXNG)](../services/searxng.md)
@@ -248,9 +259,20 @@ lsof -i :443
 
 3. Clear browser cache
 
-### Ollama/oMLX Not Connecting
+### Inference Engine Not Connecting
 
-See [OpenWebUI documentation](../services/openwebui.md#troubleshooting) for connection issues.
+**Symptoms**: No models showing in OpenWeb UI
+
+**Quick Checks**:
+```bash
+# Test your inference engine is responding
+curl http://localhost:11434/api/tags
+
+# Test from OpenWebUI container
+docker exec openwebui curl http://host.docker.internal:11434/api/tags
+```
+
+See [OpenWebUI documentation](../services/openwebui.md#inference-engine-connection-issues) for detailed troubleshooting.
 
 ## Next Steps
 

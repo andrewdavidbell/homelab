@@ -118,7 +118,7 @@ environment:
   OLLAMA_BASE_URL: http://host.docker.internal:11434
 ```
 
-This allows containers to connect to services running on macOS (Ollama, oMLX, etc.).
+This allows containers to connect to services running on macOS (oMLX, Ollama, LMStudio, or any other inference engine).
 
 ## TLS Certificates
 

@@ -33,7 +33,16 @@ services:
     container_name: openwebui
     restart: unless-stopped
     environment:
+      # Inference engine connection (only used for initial setup before DB exists)
+      # After first run, configure via Admin Panel → Settings → Connections
+      #
+      # OLLAMA_BASE_URL: For Ollama-compatible APIs (oMLX, Ollama, etc.)
       OLLAMA_BASE_URL: http://host.docker.internal:11434
+      #
+      # OPENAI_API_BASE_URL: For OpenAI-compatible APIs (optional)
+      # OPENAI_API_BASE_URL: http://host.docker.internal:8000
+      # OPENAI_API_KEY: your-api-key-here
+      #
       # WEBUI_AUTH defaults to True, so you can leave it unset or explicitly set it
       # WEBUI_AUTH: "True"
       WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"

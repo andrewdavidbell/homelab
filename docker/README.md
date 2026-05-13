@@ -6,7 +6,7 @@ Self-hosted AI and development services running on macOS with Docker Compose. Al
 
 | Service | URL | Description | Documentation |
 |---------|-----|-------------|---------------|
-| **OpenWeb UI** | `https://openwebui.home.arpa` | Chat interface for Ollama and LLM providers | [📖 Guide](docs/services/openwebui.md) |
+| **OpenWeb UI** | `https://openwebui.home.arpa` | Chat interface for local LLM providers (oMLX, Ollama, LMStudio) | [📖 Guide](docs/services/openwebui.md) |
 | **SearXNG** | `https://search.home.arpa` | Privacy-respecting metasearch engine | [📖 Guide](docs/services/searxng.md) |
 | **Jupyter** | `https://jupyter.home.arpa` | Interactive Python notebooks and data science | [📖 Guide](docs/services/jupyter.md) |
 | **Kokoro TTS** | `https://kokoro.home.arpa/web` | Fast text-to-speech with 67 voices | [📖 Guide](docs/services/kokoro-tts.md) |
@@ -75,7 +75,7 @@ docker compose pull && docker compose up -d
 
 ## Architecture
 
-All services run on a `proxy` Docker network and communicate via service names. Ollama runs on the host and is accessible via `host.docker.internal:11434`.
+All services run on a `proxy` Docker network and communicate via service names. Your inference engine (oMLX, Ollama, LMStudio, etc.) runs on the host and is accessible via `host.docker.internal:11434`.
 
 **Data persistence**: All service data is stored in `./data/[service]/` directories.
 
@@ -99,4 +99,8 @@ All services run on a `proxy` Docker network and communicate via service names. 
 
 - macOS (tested on Apple Silicon)
 - Docker Desktop
-- Ollama running on host (for OpenWeb UI)
+- Local LLM inference engine on host (for OpenWeb UI):
+  - [oMLX](https://github.com/ml-explore/mlx-examples) (recommended for Apple Silicon)
+  - [Ollama](https://ollama.ai/)
+  - [LMStudio](https://lmstudio.ai/)
+  - Or any OpenAI-compatible API server on port 11434

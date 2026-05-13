@@ -167,18 +167,22 @@ Before diving into specific issues:
 
 ## OpenWebUI Issues
 
-### Can't Connect to Ollama/oMLX
+### Can't Connect to Inference Engine
 
 **Symptoms**: No models available, connection errors
 
 **Solutions**:
 
-1. **Verify Ollama/oMLX is running on host**:
+1. **Verify your inference engine is running on host**:
    ```bash
-   # For Ollama
+   # Generic test (works for oMLX, Ollama, LMStudio)
+   curl http://localhost:11434/api/tags
+
+   # For Ollama specifically
    ollama list
 
    # For oMLX
+   # Check if mlx_lm.server is running or oMLX service is up
    curl http://localhost:11434/api/tags
    ```
 
@@ -189,19 +193,32 @@ Before diving into specific issues:
 
 3. **Check OpenWebUI logs**:
    ```bash
-   docker compose logs openwebui --tail 50 | grep -i ollama
+   docker compose logs openwebui --tail 50 | grep -i "connection\|error"
    ```
 
-4. **Verify environment variable**:
+4. **Configure connections via UI (not environment variables)**:
+   - **Important**: Environment variables are only used for initial setup
+   - Once DB exists, they're ignored
+   - Go to Admin Panel → Settings → Connections
+   - Add/verify your inference engine connection:
+     - For host inference on 11434: `http://host.docker.internal:11434`
+     - For host oMLX on 8000: `http://host.docker.internal:8000`
+     - For oMLX service: `http://omlx:8000`
+     - For LMStudio on 1234: `http://host.docker.internal:1234`
+   - Use the "Test Connection" button to verify
+
+5. **Check your inference engine port**:
    ```bash
-   docker exec openwebui env | grep OLLAMA_BASE_URL
-   # Should show: http://host.docker.internal:11434
+   # Check what port your inference engine is using
+   lsof -i :11434  # Default Ollama/oMLX port
+   lsof -i :8000   # Alternative oMLX port
+   lsof -i :1234   # Common LMStudio port
    ```
 
-5. **Try alternative URL**:
+6. **Don't rely on environment variables after first run**:
    ```bash
-   # In OpenWebUI Settings → Connections
-   # Try: http://host.docker.internal:11434
+   # This is only for reference, won't affect running system:
+   docker exec openwebui env | grep -E "OLLAMA_BASE_URL|OPENAI_API"
    ```
 
 ### Web Search Not Working

@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: whoami }
+  template:
+    metadata:
+      labels: { app: whoami }
+    spec:
+      containers:
+        - name: whoami
+          image: traefik/whoami:v1.10.1
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+  namespace: test
+spec:
+  selector: { app: whoami }
+  ports:
+    - port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami
+  namespace: test
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: test.home.arpa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: whoami
+                port:
+                  number: 80
+---
+# R2.4: a Service that asks for a specific pool IP
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami-lb
+  namespace: test
+  annotations:
+    metallb.io/loadBalancerIPs: 10.5.50.61
+spec:
+  type: LoadBalancer
+  selector: { app: whoami }
+  ports:
+    - port: 80
+---
+# Proves ESO can read the Homelab-k8s vault
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: eso-smoke-test
+  namespace: test
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: onepassword
+  target:
+    name: eso-smoke-test
+  data:
+    - secretKey: value
+      remoteRef:
+        key: eso-smoke-test/password
